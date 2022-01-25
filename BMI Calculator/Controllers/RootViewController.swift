@@ -16,6 +16,8 @@ class RootViewController: UIViewController {
     private let weightLabel = createCustomLabel(text: "Weight")
     private let weightValueLabel = createCustomLabel(text: "1")
     private let heightValueLabel = createCustomLabel(text: "0.1")
+    
+    private var BMI: Float = 0
         
     private lazy var heightLabelStack = createStackForLabels(label1: heightLabel, label2: heightValueLabel)
     private lazy var weightLabelStack = createStackForLabels(label1: weightLabel, label2: weightValueLabel)
@@ -28,6 +30,7 @@ class RootViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 20)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 51).isActive = true
+        button.addTarget(self, action: #selector(calcBMI), for: .touchUpInside)
         return button
     }()
     
@@ -86,10 +89,22 @@ class RootViewController: UIViewController {
     
     @objc private func redrawLabel(_ sender: UISlider) {
         if sender.maximumValue == 2.2 {
-            heightValueLabel.text = " \(round(sender.value * 100) / 100.0) m"
+            heightValueLabel.text = String(format:" %.2f", arguments: [sender.value])
         } else {
-            weightValueLabel.text = String(Int(sender.value))
+            weightValueLabel.text = String(format:" %.2f", arguments: [sender.value])
         }
+    }
+    
+    @objc private func calcBMI() {
+        let height = heightSlider.value
+        let weight = weightSlider.value
+        let unRoundBMI = weight / (height * height)
+        BMI = round(unRoundBMI * 100) / 100.0
+        
+        let secondVC = CalcViewController()
+        secondVC.BMI = BMI
+        present(secondVC, animated: true, completion: nil)
+        
     }
     
      private func createStackForLabels(label1: UIView, label2: UIView) -> UIStackView {
