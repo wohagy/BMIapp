@@ -2,15 +2,15 @@
 //  CalcViewController.swift
 //  BMI Calculator
 //
-//  Created by Macbook on 25.01.2022.
-//  Copyright © 2022 Angela Yu. All rights reserved.
+//  Created by wohagy on 25.01.2022.
+//  Copyright © 2022 wohagy. All rights reserved.
 //
 
 import UIKit
 
 class CalcViewController: UIViewController {
     
-    var BMI: Float = 0
+    var bmiResult: BMI?
     
     private let backImage: UIImageView = {
         let image = UIImage(named: "result_background")
@@ -21,18 +21,10 @@ class CalcViewController: UIViewController {
     
     
     private let firsLabel = UILabel.createCustomLabel(labelText: "YOUR RESULT", color: .white, fontSize: 35, fontWeight: .bold)
-    private lazy var resultLabel = UILabel.createCustomLabel(labelText: String(BMI), color: .white, fontSize: 80, fontWeight: .bold)
-    private lazy var secondLabel = UILabel.createCustomLabel(labelText: textForSecondLabel, color: .white, fontSize: 20, fontWeight: .light)
+    private lazy var resultLabel = UILabel.createCustomLabel(labelText: String(bmiResult!.value), color: bmiResult!.color, fontSize: 80, fontWeight: .bold)
+    private lazy var secondLabel = UILabel.createCustomLabel(labelText: bmiResult!.advice, color: .white, fontSize: 20, fontWeight: .light)
     
-    private lazy var textForSecondLabel: String = {
-        if BMI > 24  {
-            return "EAT LESSER SNACKS"
-        } else if BMI < 19 {
-            return "EAT SOME MORE SNACKS"
-        } else {
-            return "YOU ARE GOOD :)"
-        }
-    }()
+    
     
     private lazy var labelStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [firsLabel,resultLabel,secondLabel])
@@ -46,8 +38,8 @@ class CalcViewController: UIViewController {
     private let backButton: UIButton = {
         let button = UIButton()
         button.setTitle("Back to calc", for: .normal)
-        button.backgroundColor = #colorLiteral(red: 0.3098039329, green: 0.2039215714, blue: 0.03921568766, alpha: 1)
-        button.titleLabel?.textColor = #colorLiteral(red: 0.5223690867, green: 0.5002815723, blue: 0.8675684333, alpha: 1)
+        button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        button.setTitleColor(#colorLiteral(red: 0.5223690867, green: 0.5002815723, blue: 0.8675684333, alpha: 1), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 20)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 51).isActive = true
@@ -57,9 +49,12 @@ class CalcViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = #colorLiteral(red: 0.1185996011, green: 0.5052891374, blue: 0.8364805579, alpha: 1)
-        resultLabel.text = String(BMI)
         setupView()
     }
+    
+//    @objc private func closeDisplay() {
+//        
+//    }
     
     private func setupView() {
         view.addSubview(backImage)
@@ -82,7 +77,7 @@ class CalcViewController: UIViewController {
     }
     
     deinit {
-        print("deinit")
+        print("CalcViewController was deinited")
     }
 }
 

@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  BMI Calculator
 //
-//  Created by wohagy on 24/01/2022.
+//  Created by wohagy on 24.01.2022.
 //  Copyright © 2022 wohagy. All rights reserved.
 //
 
@@ -14,10 +14,10 @@ class RootViewController: UIViewController {
     private lazy var weightSlider = createCustomSlider(minimumValue: 1, maximumValue: 200)
     private let heightLabel = createCustomLabel(text: "Height")
     private let weightLabel = createCustomLabel(text: "Weight")
-    private let weightValueLabel = createCustomLabel(text: "1")
-    private let heightValueLabel = createCustomLabel(text: "0.1")
+    private let weightValueLabel = createCustomLabel(text: "1.0")
+    private let heightValueLabel = createCustomLabel(text: "0.10")
     
-    private var BMI: Float = 0
+    private var calc = Calculator()
         
     private lazy var heightLabelStack = createStackForLabels(label1: heightLabel, label2: heightValueLabel)
     private lazy var weightLabelStack = createStackForLabels(label1: weightLabel, label2: weightValueLabel)
@@ -26,7 +26,7 @@ class RootViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Calculate", for: .normal)
         button.backgroundColor = #colorLiteral(red: 0.5223690867, green: 0.5002815723, blue: 0.8675684333, alpha: 1)
-        button.titleLabel?.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+        button.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 20)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.heightAnchor.constraint(equalToConstant: 51).isActive = true
@@ -81,28 +81,25 @@ class RootViewController: UIViewController {
         let slider = UISlider()
         slider.maximumValue = maximumValue
         slider.minimumValue = minimumValue
+        slider.minimumTrackTintColor = #colorLiteral(red: 0.5223690867, green: 0.5002815723, blue: 0.8675684333, alpha: 1)
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        slider.addTarget(self, action: #selector(redrawLabel(_:)), for: .valueChanged)
+        slider.addTarget(self, action: #selector(redrawLabel), for: .valueChanged)
         return slider
     }
     
-    @objc private func redrawLabel(_ sender: UISlider) {
-        if sender.maximumValue == 2.2 {
-            heightValueLabel.text = String(format:" %.2f", arguments: [sender.value])
-        } else {
-            weightValueLabel.text = String(format:" %.2f", arguments: [sender.value])
-        }
+    @objc private func redrawLabel() {
+        heightValueLabel.text = String(format:" %.2f", arguments: [heightSlider.value])
+        weightValueLabel.text = String(format:" %.1f", arguments: [weightSlider.value])
     }
     
     @objc private func calcBMI() {
         let height = heightSlider.value
         let weight = weightSlider.value
-        let unRoundBMI = weight / (height * height)
-        BMI = round(unRoundBMI * 100) / 100.0
+        calc.calculateBMI(height: height, weight: weight)
         
         let secondVC = CalcViewController()
-        secondVC.BMI = BMI
+        secondVC.bmiResult = calc.getBMIvalue()
         present(secondVC, animated: true, completion: nil)
         
     }
@@ -137,7 +134,9 @@ class RootViewController: UIViewController {
             mainStack.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor)
         ])
     }
-
+    deinit {
+        print("RoorViewController was deinited")
+    }
 }
 
 
